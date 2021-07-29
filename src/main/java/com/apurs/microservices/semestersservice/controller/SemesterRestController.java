@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.apurs.microservices.coursesservice.dto.CourseDTO;
 import com.apurs.microservices.semestersservice.dto.SemesterCreateDTO;
 import com.apurs.microservices.semestersservice.dto.SemesterDTO;
 import com.apurs.microservices.semestersservice.dto.SemesterUpdateDTO;
@@ -27,7 +29,7 @@ public class SemesterRestController {
 	private SemesterService semesterService;
 	
 	@GetMapping("")
-	public List<SemesterDTO> getSemesters(){
+	public List<SemesterDTO> getSemesters() {
 		return semesterService.findAll();
 	}
 	
@@ -49,7 +51,7 @@ public class SemesterRestController {
 		if (semesterService.update(semester) != null)
 			return new ResponseEntity<>(HttpStatus.OK);
 		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@DeleteMapping("/{id}")
@@ -57,7 +59,14 @@ public class SemesterRestController {
 		if (semesterService.delete(id))
 			return new ResponseEntity<>(HttpStatus.OK);
 		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
+	@GetMapping("/courses")
+	public ResponseEntity<List<CourseDTO>> getCoursesBySyllabusNameAndSemesterNumber(@RequestParam(required = false) String syllabusName, @RequestParam(required = false) Integer number) {
+		if (number > 0 && syllabusName != null)
+			return new ResponseEntity<List<CourseDTO>> (semesterService.findCoursesBySyllabusNameAndSemesterNumber(syllabusName, number), HttpStatus.OK);
+		
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 }
