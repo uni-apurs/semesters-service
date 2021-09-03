@@ -62,9 +62,9 @@ public class SemesterRestController {
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	@GetMapping("/courses")
-	public ResponseEntity<List<CourseDTO>> getCoursesBySyllabusNameAndSemesterNumber(@RequestParam(required = false) String syllabusName, @RequestParam(required = false) Integer number) {
-		if (number > 0 && syllabusName != null)
+	@GetMapping("/{number}/courses")
+	public ResponseEntity<List<CourseDTO>> getCoursesBySyllabusNameAndSemesterNumber(@RequestParam(required = false) String syllabusName, @PathVariable("number") Integer number) {
+		if (number > 0)
 			return new ResponseEntity<List<CourseDTO>> (semesterService.findCoursesBySyllabusNameAndSemesterNumber(syllabusName, number), HttpStatus.OK);
 		
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
